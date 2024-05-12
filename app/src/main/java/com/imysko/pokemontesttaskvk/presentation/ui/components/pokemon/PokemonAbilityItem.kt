@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,6 +31,7 @@ import com.imysko.pokemontesttaskvk.presentation.entities.PokemonAbilityUiModel
 import com.imysko.pokemontesttaskvk.presentation.ui.components.base.shimmerEffect
 import com.imysko.pokemontesttaskvk.presentation.ui.theme.PokemonTestTaskVKTheme
 import com.imysko.pokemontesttaskvk.presentation.utils.preview.PokemonAbilityPreviewParameterProvider
+import com.imysko.pokemontesttaskvk.utils.TestTags
 
 @Composable
 fun PokemonAbilityItem(
@@ -38,7 +40,9 @@ fun PokemonAbilityItem(
     ability: AbilityUiModel,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .testTag(TestTags.POKEMON_ABILITY_ITEM)
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         Row(
@@ -49,6 +53,7 @@ fun PokemonAbilityItem(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(
+                    modifier = Modifier.testTag(TestTags.POKEMON_ABILITY_NAME),
                     text = ability.name,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold,
@@ -59,6 +64,7 @@ fun PokemonAbilityItem(
                     Text(
                         text = stringResource(id = R.string.ability_hidden),
                         modifier = Modifier
+                            .testTag(TestTags.POKEMON_ABILITY_IS_HIDDEN)
                             .background(
                                 color = MaterialTheme.colorScheme.outlineVariant,
                                 shape = RoundedCornerShape(12.dp)

@@ -1,0 +1,13 @@
+package com.imysko.pokemontesttaskvk.utils
+
+object TestTags {
+
+    const val POKEMON_CARD = "POKEMON_CARD"
+    const val POKEMON_CARD_TITLE = "POKEMON_CARD_TITLE"
+    const val POKEMON_CARD_TYPE = "POKEMON_CARD_TYPE"
+
+    const val POKEMON_ABILITY_ITEM = "POKEMON_ABILITY_ITEM"
+    const val POKEMON_ABILITY_NAME = "POKEMON_ABILITY_NAME"
+    const val POKEMON_ABILITY_IS_HIDDEN = "POKEMON_ABILITY_IS_HIDDEN"
+    const val POKEMON_ABILITY_SLOT_NUMBER = "POKEMON_ABILITY_SLOT_NUMBER"
+}

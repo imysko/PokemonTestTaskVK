@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,7 @@ import com.imysko.pokemontesttaskvk.presentation.entities.PokemonUiModel
 import com.imysko.pokemontesttaskvk.presentation.ui.components.base.shimmerEffect
 import com.imysko.pokemontesttaskvk.presentation.ui.theme.PokemonTestTaskVKTheme
 import com.imysko.pokemontesttaskvk.presentation.utils.preview.PokemonPreviewParameterProvider
+import com.imysko.pokemontesttaskvk.utils.TestTags
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -43,6 +45,7 @@ fun PokemonCard(
     onCardClick: (Int) -> Unit,
 ) {
     OutlinedCard(
+        modifier = Modifier.testTag(TestTags.POKEMON_CARD),
         elevation = CardDefaults.outlinedCardElevation(
             defaultElevation = 7.dp,
         ),
@@ -86,7 +89,9 @@ fun PokemonCard(
             )
 
             Text(
-                modifier = Modifier.padding(start = 10.dp),
+                modifier = Modifier
+                    .testTag(TestTags.POKEMON_CARD_TITLE)
+                    .padding(start = 10.dp),
                 text = pokemon.name,
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.SemiBold,
@@ -100,6 +105,7 @@ fun PokemonCard(
                 pokemon.types.forEach {
                     Text(
                         modifier = Modifier
+                            .testTag(TestTags.POKEMON_CARD_TYPE)
                             .background(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = RoundedCornerShape(12.dp)
