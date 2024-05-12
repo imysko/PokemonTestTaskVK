@@ -1,6 +1,8 @@
 package com.imysko.pokemontesttaskvk.di
 
+import com.imysko.pokemontesttaskvk.data.repositories.AbilityRepositoryImpl
 import com.imysko.pokemontesttaskvk.data.repositories.PokemonRepositoryImpl
+import com.imysko.pokemontesttaskvk.domain.repositories.AbilityRepository
 import com.imysko.pokemontesttaskvk.domain.repositories.PokemonRepository
 import dagger.Binds
 import dagger.Module
@@ -17,4 +19,10 @@ internal abstract class RepositoryModule {
     internal abstract fun bindPokemonRepository(
         pokemonRepositoryImpl: PokemonRepositoryImpl,
     ): PokemonRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun bindAbilityRepository(
+        abilityRepositoryImpl: AbilityRepositoryImpl,
+    ): AbilityRepository
 }

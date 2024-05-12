@@ -6,16 +6,16 @@ import javax.inject.Inject
 
 interface GetPokemonByIdUseCase {
 
-    suspend operator fun invoke(
+    operator fun invoke(
         id: Int,
-    ): Result<Pokemon>
+    ): Pokemon?
 }
 
 internal class GetPokemonByIdUseCaseImpl @Inject constructor(
     private val pokemonRepository: PokemonRepository,
 ) : GetPokemonByIdUseCase {
 
-    override suspend operator fun invoke(
+    override operator fun invoke(
         id: Int,
-    ): Result<Pokemon> = pokemonRepository.getPokemonById(id)
+    ): Pokemon? = pokemonRepository.getPokemonById(id)
 }

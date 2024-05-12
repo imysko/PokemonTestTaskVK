@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">Pokemon</string>
+    <string name="pokemon_list">Pokemon list</string>
+
+    <string name="back_action">Back action</string>
+    <string name="image_placeholder">Image placeholder</string>
+    <string name="animated_color">Animated color</string>
+    <string name="previous_image">Previous image</string>
+    <string name="next_image">Next image</string>
+    <string name="pokemon_image">Next image</string>
+    <string name="play_action">Play action</string>
+    <string name="pause_action">Pause action</string>
+    <string name="reload_action">Reload action</string>
+    <string name="not_found">Not found</string>
+    <string name="try_again">Try again</string>
+    <string name="error">Something went wrong</string>
+    <string name="no_internet_connection">No internet connection</string>
+
+    <string name="abilities">Abilities</string>
+    <string name="ability_hidden">Hidden</string>
+    <string name="slot">Slot %1$d</string>
 </resources>

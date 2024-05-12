@@ -58,8 +58,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
-//    implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -75,12 +75,13 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
     implementation(libs.coil.gif)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     implementation(libs.dagger.hilt.android)
     implementation(libs.hilt.navigation.compose)
-    ksp(libs.dagger.hilt.compiler)
 
-    // experimental
-    implementation(libs.navigation.compose.experimental)
+    ksp(libs.dagger.hilt.compiler)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.assertj.core)

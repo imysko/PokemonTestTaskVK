@@ -7,6 +7,7 @@ import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
+import coil.util.DebugLogger
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers
 
@@ -25,6 +26,7 @@ class App : Application(), ImageLoaderFactory {
                     add(GifDecoder.Factory())
                 }
             }
+            .logger(DebugLogger())
             .build()
     }
 }

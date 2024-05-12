@@ -2,10 +2,12 @@ package com.imysko.pokemontesttaskvk.presentation.ui.components.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import com.imysko.pokemontesttaskvk.domain.entities.navigation.NavDestinations
+import androidx.navigation.navArgument
+import com.imysko.pokemontesttaskvk.presentation.entities.navigation.NavArguments
+import com.imysko.pokemontesttaskvk.presentation.entities.navigation.NavDestinations
 import com.imysko.pokemontesttaskvk.presentation.ui.screens.pokemonDetail.PokemonDetailScreen
 import com.imysko.pokemontesttaskvk.presentation.ui.screens.pokemonList.PokemonListScreen
 
@@ -14,17 +16,32 @@ fun NavGraph(
     navController: NavHostController,
 ) {
 
-    NavHost(navController, startDestination = NavDestinations.PokemonList) {
-        composable<NavDestinations.PokemonList> {
+    NavHost(
+        navController = navController,
+        startDestination = NavDestinations.POKEMON_LIST_SCREEN,
+    ) {
+
+        composable(route = NavDestinations.POKEMON_LIST_SCREEN) {
             PokemonListScreen(
                 onNavigateToPokemonDetail = { id ->
-                    navController.navigate(NavDestinations.PokemonDetail(id))
-                },
+                    navController.navigate(
+                        route = "${NavDestinations.POKEMON_DETAIL_SCREEN}/${id}",
+                    )
+                }
             )
         }
-        composable<NavDestinations.PokemonDetail> { backStackEntry ->
-            val pokemonDetail: NavDestinations.PokemonDetail = backStackEntry.toRoute()
-            PokemonDetailScreen(pokemonDetail)
+
+        composable(
+            route = "${NavDestinations.POKEMON_DETAIL_SCREEN}/{${NavArguments.POKEMON_ID}}",
+            arguments = listOf(
+                navArgument(NavArguments.POKEMON_ID) {
+                    type = NavType.IntType
+                }
+            ),
+        ) {
+            PokemonDetailScreen(
+                onBackNavigate = { navController.popBackStack() },
+            )
         }
     }
 }

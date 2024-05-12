@@ -1,6 +1,8 @@
 package com.imysko.pokemontesttaskvk.di
 
 import android.content.Context
+import com.imysko.pokemontesttaskvk.data.remote.services.AbilityService
+import com.imysko.pokemontesttaskvk.data.remote.services.PokemonService
 import com.imysko.pokemontesttaskvk.utils.NetworkConnectionInterceptor
 import dagger.Module
 import dagger.Provides
@@ -72,4 +74,16 @@ internal object NetworkModule {
             .writeTimeout(1, TimeUnit.MINUTES)
             .build()
     }
+
+    @Singleton
+    @Provides
+    internal fun providerPokemonService(
+        @Named("ApiRetrofit") retrofit: Retrofit,
+    ): PokemonService = retrofit.create(PokemonService::class.java)
+
+    @Singleton
+    @Provides
+    internal fun providerAbilityService(
+        @Named("ApiRetrofit") retrofit: Retrofit,
+    ): AbilityService = retrofit.create(AbilityService::class.java)
 }

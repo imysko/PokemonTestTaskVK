@@ -1,19 +1,21 @@
 package com.imysko.pokemontesttaskvk.domain.repositories
 
 import com.imysko.pokemontesttaskvk.domain.entities.Pokemon
+import com.imysko.pokemontesttaskvk.domain.entities.PokemonAbility
+import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {
 
-    suspend fun getPokemonList(
+    fun getPokemonById(
+        id: Int,
+    ): Pokemon?
+
+    suspend fun loadPokemonNamesList(
         offset: Int,
         limit: Int,
-    ): Result<List<Pokemon>>
+    )
 
-    suspend fun getPokemonById(
-        id: Int,
-    ): Result<Pokemon>
+    fun getPokemonList(): Flow<List<Pokemon>>
 
-    suspend fun getPokemonByName(
-        name: String,
-    ): Result<Pokemon>
+    fun getPokemonAbilities(id: Int): Flow<List<PokemonAbility>>
 }

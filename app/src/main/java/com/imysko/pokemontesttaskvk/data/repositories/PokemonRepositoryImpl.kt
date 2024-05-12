@@ -1,68 +1,90 @@
 package com.imysko.pokemontesttaskvk.data.repositories
 
-import com.imysko.pokemontesttaskvk.data.entities.RequestException
+import com.imysko.pokemontesttaskvk.data.local.dao.PokemonAbilityDao
+import com.imysko.pokemontesttaskvk.data.local.dao.PokemonDao
+import com.imysko.pokemontesttaskvk.data.local.dao.PokemonTypeDao
 import com.imysko.pokemontesttaskvk.data.mappers.mapToDomain
-import com.imysko.pokemontesttaskvk.data.services.PokemonService
+import com.imysko.pokemontesttaskvk.data.mappers.mapToEntity
+import com.imysko.pokemontesttaskvk.data.remote.entities.RequestException
+import com.imysko.pokemontesttaskvk.data.remote.services.PokemonService
 import com.imysko.pokemontesttaskvk.domain.entities.Pokemon
+import com.imysko.pokemontesttaskvk.domain.entities.PokemonAbility
 import com.imysko.pokemontesttaskvk.domain.repositories.PokemonRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import okhttp3.internal.http.HTTP_NOT_FOUND
 import javax.inject.Inject
 
 internal class PokemonRepositoryImpl @Inject constructor(
     private val pokemonService: PokemonService,
-) : BaseRepository(), PokemonRepository {
+    private val pokemonDao: PokemonDao,
+    private val pokemonAbilityDao: PokemonAbilityDao,
+    private val pokemonTypeDao: PokemonTypeDao,
+) : PokemonRepository {
 
-    private val cashedList: MutableList<Pokemon> = mutableListOf()
+    override fun getPokemonById(id: Int): Pokemon? {
+        return pokemonDao.getByIdWithPokemonAbilities(id)?.mapToDomain()
+    }
 
-    override suspend fun getPokemonList(offset: Int, limit: Int): Result<List<Pokemon>> {
-//        return apiCall(
-//            call = { pokemonService.getPokemonList(offset, limit) },
-//            mappingResult = { resourceList ->
-//                resourceList.results.mapNotNull { getPokemonByName(it.name).getOrNull() }
-//            },
-//        )
+    override suspend fun loadPokemonNamesList(offset: Int, limit: Int) {
         val apiResponse = pokemonService.getPokemonList(offset, limit)
 
-        return apiResponse.body()?.let { resourceList ->
-            val result = resourceList.results.mapNotNull { resource ->
-                getPokemonByName(resource.name).getOrNull()?.also { pokemon ->
-                    if (cashedList.none { it.id == pokemon.id }) {
-                        cashedList.add(pokemon)
-                    }
-                }
-            }
-
-            Result.success(result)
+        val names = apiResponse.body()?.let { resultList ->
+            resultList.results.map { it.name }
         } ?: run {
-            Result.failure(
-                RequestException(
-                    statusCode = apiResponse.code(),
-                    message = apiResponse.message(),
-                )
+            throw RequestException(
+                statusCode = apiResponse.code(),
+                message = apiResponse.message(),
             )
+        }
+
+        if (names.isEmpty()) {
+            throw RequestException(
+                statusCode = HTTP_NOT_FOUND,
+                message = apiResponse.message(),
+            )
+        }
+
+        val pokemonList = names.map { name ->
+            pokemonService.getPokemonByName(name).body()?.mapToDomain()
+                ?: run {
+                    throw RequestException(
+                        statusCode = apiResponse.code(),
+                        message = apiResponse.message(),
+                    )
+                }
+        }
+
+        pokemonDao.upsert(*pokemonList.map { it.mapToEntity() }.toTypedArray())
+
+        CoroutineScope(Dispatchers.IO).launch {
+            pokemonList.forEach { pokemon ->
+                val pokemonAbilities = pokemon.abilities.map {
+                    it.mapToEntity(pokemon.id)
+                }.toTypedArray()
+
+                val pokemonTypes = pokemon.types.map {
+                    it.mapToEntity(pokemon.id)
+                }.toTypedArray()
+
+                pokemonAbilityDao.upsert(*pokemonAbilities)
+                pokemonTypeDao.upsert(*pokemonTypes)
+            }
         }
     }
 
-    override suspend fun getPokemonById(id: Int): Result<Pokemon> {
-        return cashedList.find { it.id == id }?.let {
-            Result.success(it)
-        } ?: apiCall(
-            call = { pokemonService.getPokemonById(id) },
-            mappingResult = { it.mapToDomain() },
-        )
+    override fun getPokemonList(): Flow<List<Pokemon>> {
+        return pokemonDao.getAll().map { list ->
+            list.map { it.mapToDomain() }
+        }
     }
 
-    override suspend fun getPokemonByName(name: String): Result<Pokemon> {
-        val apiResponse = pokemonService.getPokemonByName(name)
-
-        return apiResponse.body()?.let { pokemonResponse ->
-            Result.success(pokemonResponse.mapToDomain())
-        } ?: run {
-            Result.failure(
-                RequestException(
-                    statusCode = apiResponse.code(),
-                    message = apiResponse.message(),
-                )
-            )
+    override fun getPokemonAbilities(id: Int): Flow<List<PokemonAbility>> {
+        return pokemonAbilityDao.getByPokemonIdWithAbility(id).map { list ->
+            list.map { it.mapToDomain() }.filter { it.ability != null }
         }
     }
 }
